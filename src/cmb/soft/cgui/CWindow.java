@@ -19,7 +19,8 @@ public class CWindow extends PApplet{
     CGui cgui;
 
     CSurface cSurface;
-
+int width = CGui.DEFAULT_WIDTH;
+int height = CGui.DEFAULT_HEIGHT;
 
     public CWindow(CGui cgui, String title)
     {
@@ -31,7 +32,8 @@ public class CWindow extends PApplet{
 
     public void settings()
     {
-        size(CGui.DEFAULT_WIDTH, CGui.DEFAULT_HEIGHT, DEFAULT_RENDERER);
+        println(width, height);
+        size(width, height, DEFAULT_RENDERER);
     }
 
     public void setup()
@@ -48,7 +50,16 @@ public class CWindow extends PApplet{
         cSurface.displayOn(this, 0, 0);
     }
 
+public void setWidth(int width)
+{
+    println("newwidth", width);
+    this.width = width;
+}
 
+    public void setHeight(int height)
+    {
+        this.height = height;
+    }
 
     public void moveToTop()
     {
@@ -73,6 +84,7 @@ public class CWindow extends PApplet{
     public void setTitle(String title)
     {
         this.title = title;
+        if(surface != null) surface.setTitle(title);
     }
 
 

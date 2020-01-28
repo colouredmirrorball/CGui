@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="cgui:jar2">
+    <output-path>$USER_HOME$/Documents/Processing 3/libraries/cgui/library</output-path>
+    <root id="archive" name="cgui.jar">
+      <element id="module-output" name="cgui" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="cgui:jar">
+    <output-path>$PROJECT_DIR$/out</output-path>
+    <root id="archive" name="cgui.jar">
+      <element id="module-output" name="cgui" />
+    </root>
+  </artifact>
+</component>

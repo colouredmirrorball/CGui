@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="cgui">
+    <output-path>$PROJECT_DIR$/../../IntelliJ IDEA Projects/LaserProgram</output-path>
+    <root id="archive" name="cgui.jar">
+      <element id="module-output" name="cgui" />
+    </root>
+  </artifact>
+</component>
