@@ -1,6 +1,9 @@
 package cmb.soft.cgui;
 
+import cmb.soft.cgui.control.CKeyBinding;
 import processing.core.PApplet;
+
+import java.util.List;
 
 import static cmb.soft.cgui.CGui.DEFAULT_RENDERER;
 
@@ -93,5 +96,10 @@ public void setWidth(int width)
         String[] appletArgs = new String[]{"cmb.soft.cgui.CWindow"};
         runSketch(appletArgs, this);
         moveToTop();
+    }
+
+    public void setHotkeys(List<CKeyBinding> hotkeyList)
+    {
+        //TODO
     }
 }

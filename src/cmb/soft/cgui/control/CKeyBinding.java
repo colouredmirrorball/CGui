@@ -13,6 +13,7 @@ public class CKeyBinding extends CCommand
     private boolean control;
     private boolean alt;
     private boolean shift;
+
     public CKeyBinding(char keyCode, boolean control, boolean alt, boolean shift)
     {
         this.keyCode = keyCode;

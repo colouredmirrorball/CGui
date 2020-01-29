@@ -4,6 +4,9 @@
 package cmb.soft.cgui;
 
 import cmb.soft.cgui.celements.CButton;
+import cmb.soft.cgui.control.ActionMap;
+import cmb.soft.cgui.control.CAction;
+import cmb.soft.cgui.control.CKeyBinding;
 import cmb.soft.cgui.style.DefaultStyle;
 import cmb.soft.cgui.style.Style;
 import processing.core.PConstants;
@@ -32,10 +35,14 @@ public class CGui implements PConstants
     //this will read them from config.properties and store them in its object
     public static Properties guiProperties = new Properties();
     //Same but for hotkey bindings
-    Properties hotkeyProperties = new Properties();
-    Properties applicationProperties = new Properties();
+    public static Properties hotkeyProperties = new Properties();
+    public static Properties applicationProperties = new Properties();
     private boolean createGuiPropertiesOnExit = false;
     private File guiPropertiesFile;
+    private final File hotkeyPropertiesFile;
+    private final File applicationPropertiesFile;
+    private boolean createApplicationPropertiesOnExit;
+    private boolean createHotkeyPropertiesOnExit;
 
     Style style = new DefaultStyle();
 
@@ -43,6 +50,7 @@ public class CGui implements PConstants
     ArrayList<CWindow> windows = new ArrayList<CWindow>();
 
     Logger logger = Logger.getLogger(getClass().getName());
+    private List<CKeyBinding> hotkeyList;
 
     public CGui()
     {
@@ -51,6 +59,7 @@ public class CGui implements PConstants
         surfaces.add(defaultSurface);
         defaultWindow = new CWindow(this, "CGUI");
         windows.add(defaultWindow);
+
         guiPropertiesFile = new File(defaultWindow.sketchPath() + "/data/ui.properties");
         try (InputStream input = new FileInputStream(guiPropertiesFile))
         {
@@ -61,18 +70,63 @@ public class CGui implements PConstants
             defaultWindow.setHeight(height);
         } catch (FileNotFoundException e)
         {
-            logger.warning("No property file found. Using default values...");
+            logger.warning("No ui property file found. Using default values...");
             createGuiPropertiesOnExit = true;
             e.printStackTrace();
         } catch (IOException e)
         {
-            logger.warning("Could not read property file. Using default values...");
+            logger.warning("Could not read ui property file. Using default values...");
+            e.printStackTrace();
+        }
+
+        hotkeyPropertiesFile = new File(defaultWindow.sketchPath() + "/data/hotkeys.properties");
+        try (InputStream input = new FileInputStream(hotkeyPropertiesFile))
+        {
+            hotkeyProperties.load(input);
+           hotkeyProperties.stringPropertyNames().forEach(property -> bindHotkey(property,hotkeyProperties.getProperty(property)));
+        } catch (FileNotFoundException e)
+        {
+            logger.warning("No hotkey property file found. Using default values...");
+            createHotkeyPropertiesOnExit = true;
+            e.printStackTrace();
+        } catch (IOException e)
+        {
+            logger.warning("Could not read hotkey property file. Using default values...");
+            e.printStackTrace();
+        }
+
+        applicationPropertiesFile = new File(defaultWindow.sketchPath() + "/data/application.properties");
+        try (InputStream input = new FileInputStream(applicationPropertiesFile))
+        {
+            applicationProperties.load(input);
+        } catch (FileNotFoundException e)
+        {
+            logger.warning("No application property file found. Using default values...");
+            createApplicationPropertiesOnExit = true;
+            e.printStackTrace();
+        } catch (IOException e)
+        {
+            logger.warning("Could not read application property file. Using default values...");
             e.printStackTrace();
         }
     }
 
+    private void bindHotkey(String hotkey, String action)
+    {
+        hotkeyList = new ArrayList<>();
+        CKeyBinding binding = new CKeyBinding(hotkey);
+        binding.registerAction(findAction(action));
+        hotkeyList.add(binding);
+    }
+
+    private CAction findAction(String action)
+    {
+        return ActionMap.findAction(action);
+    }
+
     public void launch()
     {
+        defaultWindow.setHotkeys(hotkeyList);
         defaultWindow.boot();
 
     }
@@ -183,6 +237,43 @@ public class CGui implements PConstants
         try
         {
             guiProperties.store(new FileOutputStream(guiPropertiesFile), "auto generated");
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        if (createHotkeyPropertiesOnExit)
+        {
+            try
+            {
+                boolean success = hotkeyPropertiesFile.createNewFile();
+                if(success) logger.info("Created new hotkey property file: " + hotkeyPropertiesFile.getAbsolutePath());
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        try
+        {
+            hotkeyProperties.store(new FileOutputStream(hotkeyPropertiesFile), "auto generated");
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        if (createApplicationPropertiesOnExit)
+        {
+            try
+            {
+                boolean success = applicationPropertiesFile.createNewFile();
+                if(success) logger.info("Created new application property file: " + applicationPropertiesFile.getAbsolutePath());
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        try
+        {
+            applicationProperties.store(new FileOutputStream(applicationPropertiesFile), "auto generated");
+
         } catch (IOException e)
         {
             e.printStackTrace();
