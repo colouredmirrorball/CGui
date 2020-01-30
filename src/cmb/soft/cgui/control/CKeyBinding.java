@@ -13,6 +13,7 @@ public class CKeyBinding extends CCommand
     private boolean control;
     private boolean alt;
     private boolean shift;
+    private String hotkey;
 
     public CKeyBinding(char keyCode, boolean control, boolean alt, boolean shift)
     {
@@ -20,10 +21,12 @@ public class CKeyBinding extends CCommand
         this.control = control;
         this.alt = alt;
         this.shift = shift;
+        hotkey = getKeyString();
     }
 
     public CKeyBinding(String hotkey)
     {
+        this.hotkey = hotkey;
         String[] split = split(hotkey, '+');
         for (String s : split)
         {
@@ -48,4 +51,13 @@ public class CKeyBinding extends CCommand
             }
         }
     }
+
+
+    public String getKeyString()
+    {
+        return (control ? "ctrl+" : "") + (alt ? "alt+" : "") + (shift ? "shift+" : "") + keyCode;
+    }
+
+
+
 }

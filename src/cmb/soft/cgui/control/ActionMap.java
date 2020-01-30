@@ -11,14 +11,13 @@ import java.util.Map;
  */
 public class ActionMap
 {
-    public static Map<String, CAction> map = new HashMap<>();
+    public static Map<String, Class<? extends CAction>> map = new HashMap<>();
     {
-        map.put("undo",new UndoAction());
-
+        map.put("undo", UndoAction.class);
     }
 
 
-    public static CAction findAction(String action)
+    public static Class<? extends CAction> findAction(String action)
     {
         return map.get(action);
     }

@@ -2,8 +2,12 @@ package cmb.soft.cgui;
 
 import cmb.soft.cgui.control.CKeyBinding;
 import processing.core.PApplet;
+import processing.event.KeyEvent;
 
+import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static cmb.soft.cgui.CGui.DEFAULT_RENDERER;
 
@@ -24,6 +28,8 @@ public class CWindow extends PApplet{
     CSurface cSurface;
 int width = CGui.DEFAULT_WIDTH;
 int height = CGui.DEFAULT_HEIGHT;
+
+Map<String,CKeyBinding> hotkeys;
 
     public CWindow(CGui cgui, String title)
     {
@@ -100,6 +106,31 @@ public void setWidth(int width)
 
     public void setHotkeys(List<CKeyBinding> hotkeyList)
     {
-        //TODO
+        this.hotkeys = new HashMap<>();
+        for (CKeyBinding keyBinding : hotkeyList)
+        {
+            hotkeys.put(keyBinding.getKeyString(), keyBinding);
+        }
+    }
+
+    public void keyPressed(KeyEvent event)
+    {
+        String hotkey = parseEvent(event);
+        try
+        {
+            CKeyBinding binding = hotkeys.get(hotkey);
+            if(binding != null) {
+                binding.execute();
+            }
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+    private String parseEvent(KeyEvent event)
+    {
+         return (event.isControlDown() ? "ctrl+" : "") + (event.isAltDown() ? "alt+" : "") + (event.isShiftDown() ? "shift+" : "") + event.getKeyCode();
     }
 }

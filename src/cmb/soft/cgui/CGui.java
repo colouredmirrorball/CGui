@@ -9,19 +9,23 @@ import cmb.soft.cgui.control.CAction;
 import cmb.soft.cgui.control.CKeyBinding;
 import cmb.soft.cgui.style.DefaultStyle;
 import cmb.soft.cgui.style.Style;
+import com.sun.glass.ui.Accessible;
 import processing.core.PConstants;
 
 import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
 
+import static cmb.soft.cgui.control.ActionMap.findAction;
 import static processing.core.PApplet.println;
 
 public class CGui implements PConstants
 {
+    private static CGui instance;
 
     public final static String DEFAULT_RENDERER = P3D;
     public final static int DEFAULT_WIDTH = 1200, DEFAULT_HEIGHT = 800;
+    public static Accessible.EventHandler getInstance;
 
     CSurface defaultSurface;
     CWindow defaultWindow;
@@ -50,9 +54,9 @@ public class CGui implements PConstants
     ArrayList<CWindow> windows = new ArrayList<CWindow>();
 
     Logger logger = Logger.getLogger(getClass().getName());
-    private List<CKeyBinding> hotkeyList;
+    private List<CKeyBinding> hotkeyList = new ArrayList<>();
 
-    public CGui()
+    private CGui()
     {
 
         defaultSurface = new CSurface(this);
@@ -83,7 +87,7 @@ public class CGui implements PConstants
         try (InputStream input = new FileInputStream(hotkeyPropertiesFile))
         {
             hotkeyProperties.load(input);
-           hotkeyProperties.stringPropertyNames().forEach(property -> bindHotkey(property,hotkeyProperties.getProperty(property)));
+            hotkeyProperties.stringPropertyNames().forEach(property -> bindHotkey(hotkeyProperties.getProperty(property), property));
         } catch (FileNotFoundException e)
         {
             logger.warning("No hotkey property file found. Using default values...");
@@ -111,21 +115,31 @@ public class CGui implements PConstants
         }
     }
 
+    public static CGui getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new CGui();
+        }
+        return instance;
+    }
+
     private void bindHotkey(String hotkey, String action)
     {
-        hotkeyList = new ArrayList<>();
+        System.out.println(hotkey);
         CKeyBinding binding = new CKeyBinding(hotkey);
         binding.registerAction(findAction(action));
         hotkeyList.add(binding);
     }
 
-    private CAction findAction(String action)
+    private Class<? extends CAction> findActionClass(String action)
     {
-        return ActionMap.findAction(action);
+        return findAction(action);
     }
 
     public void launch()
     {
+        System.out.println("settinghotkeys");
         defaultWindow.setHotkeys(hotkeyList);
         defaultWindow.boot();
 
@@ -168,9 +182,7 @@ public class CGui implements PConstants
     public CWindow addWindow(String name)
     {
         CWindow newWindow = new CWindow(this, name);
-
-            windows.add(newWindow);
-
+        windows.add(newWindow);
         return newWindow;
     }
 
@@ -313,5 +325,10 @@ public class CGui implements PConstants
     public CWindow getDefaultWindow()
     {
         return defaultWindow;
+    }
+
+    public void executeAction(CAction action)
+    {
+        System.out.println(action.getClass().getName());
     }
 }

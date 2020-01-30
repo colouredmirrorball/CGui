@@ -1,7 +1,11 @@
 package cmb.soft.cgui.control;
 
+import cmb.soft.cgui.CGui;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static processing.core.PApplet.println;
 
 /**
  * @author Florian
@@ -9,17 +13,19 @@ import java.util.List;
  */
 public abstract class CCommand
 {
-    private List<CAction> actions = new ArrayList<CAction>();
+    private List<Class<? extends CAction>> actions = new ArrayList<>();
 
-    public void execute()
+    public void execute() throws IllegalAccessException, InstantiationException
     {
-        for (CAction action : actions)
+        println("actions size", actions.size());
+        for (Class<? extends CAction> ActionClass : actions)
         {
-            action.execute();
+            CAction action = ActionClass.newInstance();
+            CGui.getInstance().executeAction(action);
         }
     }
 
-    public void registerAction(CAction action)
+    public void registerAction(Class<? extends CAction> action)
     {
         actions.add(action);
     }
