@@ -1,31 +1,38 @@
-/**
+/*
  * Created by florian on 5/11/2014.
  */
 package cmb.soft.cgui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.logging.Logger;
+
 import cmb.soft.cgui.celements.CButton;
-import cmb.soft.cgui.control.ActionMap;
 import cmb.soft.cgui.control.CAction;
 import cmb.soft.cgui.control.CKeyBinding;
 import cmb.soft.cgui.style.DefaultStyle;
 import cmb.soft.cgui.style.Style;
-import com.sun.glass.ui.Accessible;
 import processing.core.PConstants;
 
-import java.io.*;
-import java.util.*;
-import java.util.logging.Logger;
-
 import static cmb.soft.cgui.control.ActionMap.findAction;
-import static processing.core.PApplet.println;
 
-public class CGui implements PConstants
-{
+public class CGui implements PConstants {
     private static CGui instance;
 
     public final static String DEFAULT_RENDERER = P3D;
-    public final static int DEFAULT_WIDTH = 1200, DEFAULT_HEIGHT = 800;
-    public static Accessible.EventHandler getInstance;
+    public final static int DEFAULT_WIDTH = 1200;
+    public final static int DEFAULT_HEIGHT = 800;
+    //    public static Accessible.EventHandler getInstance;
 
     CSurface defaultSurface;
     CWindow defaultWindow;
@@ -37,36 +44,33 @@ public class CGui implements PConstants
 
     //Used for system parameters like theme, which language, and so on
     //this will read them from config.properties and store them in its object
-    public static Properties guiProperties = new Properties();
+    public static final Properties guiProperties = new Properties();
     //Same but for hotkey bindings
-    public static Properties hotkeyProperties = new Properties();
-    public static Properties applicationProperties = new Properties();
+    public static final Properties hotkeyProperties = new Properties();
+    public static final Properties applicationProperties = new Properties();
     private boolean createGuiPropertiesOnExit = false;
-    private File guiPropertiesFile;
+    private final File guiPropertiesFile;
     private final File hotkeyPropertiesFile;
     private final File applicationPropertiesFile;
     private boolean createApplicationPropertiesOnExit;
     private boolean createHotkeyPropertiesOnExit;
 
     Style style = new DefaultStyle();
-
-    protected ArrayList<CSurface> surfaces = new ArrayList<CSurface>();
-    ArrayList<CWindow> windows = new ArrayList<CWindow>();
+    private final List<CKeyBinding> hotkeyList = new ArrayList<>();
+    protected List<CSurface> surfaces = new ArrayList<>();
 
     Logger logger = Logger.getLogger(getClass().getName());
-    private List<CKeyBinding> hotkeyList = new ArrayList<>();
+    List<CWindow> cWindows = new ArrayList<>();
 
-    private CGui()
-    {
+    private CGui() {
 
         defaultSurface = new CSurface(this);
         surfaces.add(defaultSurface);
         defaultWindow = new CWindow(this, "CGUI");
-        windows.add(defaultWindow);
+        cWindows.add(defaultWindow);
 
         guiPropertiesFile = new File(defaultWindow.sketchPath() + "/data/ui.properties");
-        try (InputStream input = new FileInputStream(guiPropertiesFile))
-        {
+        try (InputStream input = new FileInputStream(guiPropertiesFile)) {
             guiProperties.load(input);
             int width = Integer.parseInt(getGuiPropertyOrDefault("width"));
             int height = Integer.parseInt(getGuiPropertyOrDefault("height"));
@@ -108,70 +112,63 @@ public class CGui implements PConstants
             logger.warning("No application property file found. Using default values...");
             createApplicationPropertiesOnExit = true;
             e.printStackTrace();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.warning("Could not read application property file. Using default values...");
             e.printStackTrace();
         }
     }
 
-    public static CGui getInstance()
-    {
-        if (instance == null)
-        {
+    public static CGui getInstance() {
+        if (instance == null) {
             instance = new CGui();
         }
         return instance;
     }
 
-    private void bindHotkey(String hotkey, String action)
-    {
-        System.out.println(hotkey);
+    public static void log(String log) {
+        Logger.getLogger("CGui").info(log);
+    }
+
+    public static String getGuiPropertyOrDefault(String key) {
+        Objects.requireNonNull(key);
+        String returnValue = guiProperties.getProperty(key);
+        if (returnValue == null) {
+            returnValue = getDefaultProperty(key);
+            if (returnValue != null)
+                guiProperties.setProperty(key, returnValue);
+        }
+        return returnValue;
+    }
+
+    //    private Class<? extends CAction> findActionClass(String action)
+    //    {
+    //        return findAction(action);
+    //    }
+
+    private void bindHotkey(String hotkey, String action) {
         CKeyBinding binding = new CKeyBinding(hotkey);
         binding.registerAction(findAction(action));
         hotkeyList.add(binding);
     }
 
-    private Class<? extends CAction> findActionClass(String action)
-    {
-        return findAction(action);
-    }
-
-    public void launch()
-    {
-        System.out.println("settinghotkeys");
+    public void launch() {
         defaultWindow.setHotkeys(hotkeyList);
         defaultWindow.boot();
-
     }
+
+    //    public void draw()
+    //    {
+    //        defaultSurface.update();
+    //        defaultSurface.displayOn(defaultWindow, 0, 0);
+    //    }
 
     /**
      * Set title of default window
+     *
      * @param title some title
      */
-    public void setTitle(String title)
-    {
+    public void setTitle(String title) {
         defaultWindow.setTitle(title);
-    }
-
-
-    public void draw()
-    {
-        defaultSurface.update();
-        defaultSurface.displayOn(defaultWindow, 0, 0);
-
-    }
-
-    public static String getGuiPropertyOrDefault(String key)
-    {
-        Objects.requireNonNull(key);
-        String returnValue = guiProperties.getProperty(key);
-        if (returnValue == null)
-        {
-            returnValue = getDefaultProperty(key);
-            if(returnValue != null) guiProperties.setProperty(key, returnValue);
-        }
-        return returnValue;
     }
 
     private static String getDefaultProperty(String key)
@@ -182,19 +179,19 @@ public class CGui implements PConstants
     public CWindow addWindow(String name)
     {
         CWindow newWindow = new CWindow(this, name);
-        windows.add(newWindow);
+        cWindows.add(newWindow);
         return newWindow;
     }
 
     public CPane addPane(CPane pane)
     {
-
+        addPane(pane, getDefaultWindow());
         return pane;
     }
 
     public void addPane(CPane pane, CWindow window)
     {
-
+        window.addPane(pane);
 
     }
 
@@ -223,18 +220,14 @@ public class CGui implements PConstants
 
     public void removeWindow(CWindow cWindow)
     {
-        for (int i = windows.size() - 1; i >= 0; i--)
-        {
-            CWindow window = windows.get(i);
-            if (window == cWindow)
-            {
-                window = null;
-                windows.remove(i);
+        for (int i = cWindows.size() - 1; i >= 0; i--) {
+            CWindow window = cWindows.get(i);
+            if (window == cWindow) {
+                cWindows.remove(i);
                 return;
             }
         }
-        if (windows.size() == 0)
-        {
+        if (cWindows.isEmpty()) {
             exit();
         }
     }

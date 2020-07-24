@@ -6,34 +6,30 @@ import processing.core.PApplet;
  * @author Florian
  * Created on 1/03/2019
  */
-public class CLauncher extends PApplet
-{
+public class CLauncher extends PApplet {
     Processor processor;
 
-    public void settings()
-    {
+    @Override
+    public void settings() {
         size(300, 300);
 
     }
-
-
-
 
     /**
      * initialisation
      */
 
+    @Override
     public void setup()
     {
         processor = new Processor(this);
         surface.setAlwaysOnTop(true);
         surface.setResizable(false);
         new Thread(processor).start();
-
-
     }
 
     //Quit without ending the JVM
+    @Override
     public void exit()
     {
         dispose();

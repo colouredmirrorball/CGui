@@ -1,11 +1,12 @@
 package cmb.soft.cgui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import cmb.soft.cgui.celements.CButton;
 import processing.core.PGraphics;
 
-import java.util.ArrayList;
-
-import static cmb.soft.cgui.CGui.*;
+import static cmb.soft.cgui.CGui.DEFAULT_RENDERER;
 
 /**
  * A CSurface is what is drawn in a CWindow, or in the main PApplet
@@ -19,67 +20,57 @@ import static cmb.soft.cgui.CGui.*;
  * so the user can edit a drawing while seeing the processed effect on the timeline
  */
 
-
-
-public class CSurface
-{
+public class CSurface {
     CGui gui;
     PGraphics pg;
 
-    ArrayList<CPane> panels = new ArrayList<CPane>();
+    List<CPane> panels = new ArrayList<>();
 
     CPane defaultPane;
     CLayout defaultLayout;
 
-
-    public CSurface(CGui gui)
-    {
+    public CSurface(CGui gui) {
         defaultLayout = new CLayout("Default");
         defaultPane = new CPane(defaultLayout);
         panels.add(defaultPane);
     }
 
-    public void displayOn(CWindow window, int x, int y)
-    {
-        if (pg == null)
-        {
+    public void displayOn(CWindow window, int x, int y) {
+        if (pg == null) {
             pg = window.createGraphics(window.width, window.height, DEFAULT_RENDERER);
         }
         PGraphics g = window.g;
         pg.beginDraw();
-        if(panels.size() > 1)
-        {
+        if (panels.size() > 1) {
             g.noFill();
             //draw a rectangle around every panel
-            for (CPane pane : panels)
-            {
+            for (CPane pane : panels) {
 
             }
         }
-        for(CPane panel : panels)
-        {
+        for (CPane panel : panels) {
             panel.draw(this, pg);
         }
         pg.endDraw();
         g.image(pg, x, y);
     }
 
-    public CButton addButton(CGui gui, String name)
-    {
+    public CButton addButton(CGui gui, String name) {
         return defaultPane.addButton(gui, name);
     }
 
-    public void update()
-    {
-        for (CPane panel : panels)
-        {
+    public void update() {
+        for (CPane panel : panels) {
             panel.update();
         }
     }
 
-    public boolean mouseOver(CRectangle rect)
-    {
+    public boolean mouseOver(CRectangle rect) {
         //TODO
         return false;
+    }
+
+    public void addPane(CPane pane) {
+        panels.add(pane);
     }
 }
