@@ -55,6 +55,7 @@ Map<String,CKeyBinding> hotkeys;
 
     public void draw()
     {
+        CGui.getInstance().getStyle().drawBackground(g);
         cSurface.update();
         cSurface.displayOn(this, 0, 0);
     }

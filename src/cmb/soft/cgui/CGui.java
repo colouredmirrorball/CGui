@@ -214,6 +214,12 @@ public class CGui implements PConstants
 
     }
 
+    public CPane setPane(CPane pane)
+    {
+        defaultSurface.panels.add(pane);
+        return pane;
+    }
+
 
     public void removeWindow(CWindow cWindow)
     {

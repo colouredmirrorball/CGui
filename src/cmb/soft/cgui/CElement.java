@@ -4,6 +4,9 @@ import cmb.soft.cgui.control.CAction;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by florian on 28/11/2014.
  */
@@ -19,7 +22,7 @@ public class CElement {
     protected CRectangle rect;
     protected CPosition pos;
 
-    protected CAction action;
+    protected List<CAction> actions = new ArrayList<>();
     private boolean collapsed = false;
     private boolean selected = false;
     protected int element;
@@ -37,9 +40,10 @@ public class CElement {
         cgui.getStyle().drawElement(g, displayName, selected, mouseover, element);
     }
 
-    public void setPosition(CPosition pos)
+    public CElement setPosition(CPosition pos)
     {
         this.pos = pos;
+        return this;
     }
 
     public void update(CSurface surface)
@@ -47,8 +51,18 @@ public class CElement {
         if(!visible) return;
         if(surface.mouseOver(rect))
         {
-
+            mouseover = true;
+        }
+        else
+        {
+            mouseover = false;
         }
 
+    }
+
+    public CElement addAction(CAction action)
+    {
+        actions.add(action);
+        return this;
     }
 }

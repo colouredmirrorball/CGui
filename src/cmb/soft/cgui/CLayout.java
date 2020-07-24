@@ -26,10 +26,9 @@ public class CLayout
 
     public void draw(CSurface surface, PGraphics g, int activeTab)
     {
-
-
         for (CElement element : elements)
         {
+            System.out.println("clayout draw");
             element.update(surface );
             element.draw(g);
 

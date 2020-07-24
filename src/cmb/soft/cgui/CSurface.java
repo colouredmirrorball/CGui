@@ -36,6 +36,7 @@ public class CSurface
     {
         defaultLayout = new CLayout("Default");
         defaultPane = new CPane(defaultLayout);
+        panels.add(defaultPane);
     }
 
     public void displayOn(CWindow window, int x, int y)

@@ -26,11 +26,12 @@ public class DefaultStyle implements Style
         g.rect(0,0, g.width, g.height);
         g.fill(strokeColour);
         if(g.width > 50 && g.height > 15) g.text(title, 5, 5);
+        System.out.println("drawing...");
     }
 
     @Override
     public void drawBackground(PGraphics g)
     {
-
+        g.background(0);
     }
 }
