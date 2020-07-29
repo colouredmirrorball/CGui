@@ -16,12 +16,17 @@ import java.util.logging.Logger;
 
 import static cmb.soft.cgui.control.ActionMap.findAction;
 
-public class CGui implements PConstants {
+public class CGui implements PConstants
+{
     private static CGui instance;
 
     public final static String DEFAULT_RENDERER = P3D;
     public final static int DEFAULT_WIDTH = 1200;
     public final static int DEFAULT_HEIGHT = 800;
+    public final static float DEFAULT_ANIMATION_SPEED = 0.5f;
+    public final static int DEFAULT_SPACING = 5;
+    public final static int DEFAULT_ELEMENT_WIDTH = 150;
+    public final static int DEFAULT_ELEMENT_HEIGHT = 50;
     //    public static Accessible.EventHandler getInstance;
 
     CSurface defaultSurface;
@@ -300,5 +305,29 @@ public class CGui implements PConstants {
     public void executeAction(CAction action)
     {
         System.out.println(action.getClass().getName());
+    }
+
+    public float getAnimationSpeed()
+    {
+        //TODO make animation speed selectable
+        return DEFAULT_ANIMATION_SPEED;
+    }
+
+    public int getSpacing()
+    {
+        //TODO make spacing configurable
+        return DEFAULT_SPACING;
+    }
+
+    public int getDefaultElementWidth()
+    {
+        //TODO make configurable
+        return DEFAULT_ELEMENT_WIDTH;
+    }
+
+    public int getDefaultElementHeight()
+    {
+        //TODO make configurable
+        return DEFAULT_ELEMENT_HEIGHT;
     }
 }

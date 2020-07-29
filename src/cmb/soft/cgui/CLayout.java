@@ -4,16 +4,17 @@ import cmb.soft.cgui.celements.CButton;
 import processing.core.PGraphics;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- * This is where you store your CElements.
- * A CLayout is assigned to a Pane.
+ * A CLayout is a template for the UI. It defines the (initial) UI elements' positions and sizes. A CPane contains the
+ * actual UI elements as defined by a CLayout. The CLayout dictates how the contents of the CPane
  * A CLayout has the option to have tabs.
  */
 public class CLayout
 {
-    protected ArrayList<CTab> tabs = new ArrayList<CTab>();
-    protected ArrayList<CElement> elements = new ArrayList<CElement>();
+    private final List<CTab> tabs = new ArrayList<>();
+    private final List<CElement> elements = new ArrayList<>();
 
     String name = "Empty Layout";
 
@@ -27,26 +28,50 @@ public class CLayout
     {
         for (CElement element : elements)
         {
-            element.update(surface );
+            element.update(surface);
             element.draw(g);
 
         }
     }
 
-    public CLayout addElement(CElement element)
+    /**
+     * Adds an element and makes a guess at the best possible location for the element
+     *
+     * @param element an element to be added
+     * @return the element
+     */
+
+    public CElement addElementWithPosition(CElement element)
     {
+        CRectangle rectangle = findBestPossiblePosition(elements);
+        element.setRectangle(rectangle);
         elements.add(element);
-        return this;
+        return element;
+    }
+
+    private CRectangle findBestPossiblePosition(List<CElement> elements)
+    {
+        if (elements.isEmpty())
+        {
+            return new CRectangle(5, 5, 150, 50);
+        } else
+        {
+            //just place them in a vertical list for now
+            CElement lastElement = elements.get(elements.size() - 1);
+            CRectangle parentRectangle = lastElement.getRectangle();
+            return new CRectangle(parentRectangle, CRectangle.RELATIVE_TO_BOUNDS, CRectangle.LOWER_LEFT, 5, 5,
+                    CGui.getInstance().getDefaultElementWidth(), CGui.getInstance().getDefaultElementHeight());
+        }
     }
 
     public CButton addButton(CGui gui, String name)
     {
         CButton newButton = new CButton(gui, name);
-        elements.add(newButton);
+        addElementWithPosition(newButton);
         return newButton;
     }
 
-    public ArrayList<CTab> getTabs()
+    public List<CTab> getTabs()
     {
         return tabs;
     }

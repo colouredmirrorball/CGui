@@ -65,7 +65,7 @@ public class CSurface {
         }
     }
 
-    public boolean mouseOver(CPosition pos, CRectangle rect)
+    public boolean mouseOver(CRectangle rect)
     {
         return false;
     }

@@ -1,13 +1,10 @@
 package cmb.soft.cgui;
 
 import cmb.soft.cgui.celements.CButton;
-import processing.core.PApplet;
 import processing.core.PGraphics;
-import processing.core.PSurface;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A CPane is an element of a CWindow (or PApplet) and draws onto a CSurface
@@ -16,11 +13,12 @@ import java.util.LinkedList;
  * To a CLayout is a number of CTabs assigned, with different content but the same GUI layout
  * The CPane should display the CLayout and the choice of CTabs
  * A CPane can also switch between layouts (and should also have a menu element that allows the user to pick one)
- *
- *
+ * <p>
+ * <p>
  * Created by florian on 7/11/2014.
  */
-public class CPane {
+public class CPane
+{
 
 
     //which buttons should it display?
@@ -31,7 +29,7 @@ public class CPane {
 
     //When another layout is activated and later the user returns to the original layout, he'll expect his states to be restored
     //so we gotta save it somehow and link it to the layout
-    LinkedHashMap<CTab, CPaneLayoutProperties> propertiesMemory = new LinkedHashMap<CTab, CPaneLayoutProperties>();
+    LinkedHashMap<CTab, CPaneLayoutProperties> propertiesMemory = new LinkedHashMap<>();
 
     //How flexible is the user interface?
     protected int mode;
@@ -44,8 +42,6 @@ public class CPane {
     public String title = "";
     protected int w, h, x, y;
     protected boolean multiTab = false;
-    protected CRectangle rect = new CRectangle(50, 50);
-    protected CPosition pos = new CPosition(CPosition.UPPER_LEFT);
     protected int activeTab = 0;
 
     public CPane(CLayout layout)
@@ -55,19 +51,21 @@ public class CPane {
 
     }
 
-    public void draw(CSurface surface, PGraphics pg) {
-        ArrayList<CTab> tabs = layout.getTabs();
-        if(tabs.size() < 1) return;
-        if (tabs.size() == 1) {
+    public void draw(CSurface surface, PGraphics pg)
+    {
+        List<CTab> tabs = layout.getTabs();
+        if (tabs.size() < 1) return;
+        if (tabs.size() == 1)
+        {
             //tabs.get(activeTab).draw(g);
-        }
-        else {
-            for (CTab t : tabs) {
+        } else
+        {
+            for (CTab t : tabs)
+            {
                 //draw tab name on top of pane
             }
         }
 
-        rect.update();
         layout.draw(surface, pg, activeTab);
     }
 
@@ -75,27 +73,9 @@ public class CPane {
     {
     }
 
-    public CPane setMultiTab(boolean multipleTabsPossible) {
+    public CPane setMultiTab(boolean multipleTabsPossible)
+    {
         multiTab = multipleTabsPossible;
-        return this;
-    }
-
-    public CPane setRectangle(CRectangle rectangle) {
-        rect = rectangle;
-        return this;
-    }
-
-    public CPane setSize(int width, int height) {
-        rect = new CRectangle(width, height);
-        return this;
-    }
-
-    public void reachSize(int newWidth, int newHeight) {
-        rect.setNewRectangle(newWidth, newHeight);
-    }
-
-    public CPane setPosition(CPosition pos) {
-        this.pos = pos;
         return this;
     }
 
