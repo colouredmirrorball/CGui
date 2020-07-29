@@ -7,7 +7,6 @@ import processing.core.PApplet;
  * Created on 1/03/2019
  */
 public class CLauncher extends PApplet {
-    Processor processor;
 
     @Override
     public void settings() {
@@ -22,10 +21,8 @@ public class CLauncher extends PApplet {
     @Override
     public void setup()
     {
-        processor = new Processor(this);
         surface.setAlwaysOnTop(true);
         surface.setResizable(false);
-        new Thread(processor).start();
     }
 
     //Quit without ending the JVM

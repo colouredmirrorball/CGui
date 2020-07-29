@@ -52,7 +52,6 @@ public class CPosition {
             v2 = 5;
 
         }
-
         else
         {
 

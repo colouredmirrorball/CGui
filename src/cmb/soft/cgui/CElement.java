@@ -1,7 +1,6 @@
 package cmb.soft.cgui;
 
 import cmb.soft.cgui.control.CAction;
-import processing.core.PApplet;
 import processing.core.PGraphics;
 
 import java.util.ArrayList;
@@ -10,34 +9,49 @@ import java.util.List;
 /**
  * Created by florian on 28/11/2014.
  */
-public class CElement {
-    public CGui cgui;
-    String name;
-    String displayName;
-    int shape;
-    boolean mouseover;
+public class CElement
+{
+    private final String name;
+    private final CRectangle rect;
+    private final PGraphics graphics;
+    private final String displayName;
+    private final boolean active = false;
+    private final boolean collapsed = false;
+    private CPosition pos;
+    private boolean mouseover;
 
-    boolean updating = false;
-    boolean visible = true;
-    protected CRectangle rect;
-    protected CPosition pos;
 
     protected List<CAction> actions = new ArrayList<>();
-    private boolean collapsed = false;
-    private boolean selected = false;
+    private boolean visible = true;
     protected int element;
 
     public CElement(CGui gui, String name)
     {
-        this.name = name;
-        this.displayName = name;
-        this.cgui = gui;
-
+        this(gui, name, 5, 5);
     }
 
-    public void draw(PGraphics g) {
-        if(!visible ) return;
-        cgui.getStyle().drawElement(g, displayName, selected, mouseover, element);
+    public CElement(CGui gui, String name, int x, int y)
+    {
+        this.name = name;
+        this.displayName = name;
+        rect = new CRectangle(200, 100);
+        rect.addSizeChangeListener(this::updateSize);
+        pos = new CPosition(x, y);
+        graphics = gui.defaultWindow.createGraphics(200, 100);
+    }
+
+    private void updateSize()
+    {
+        graphics.setSize((int) rect.neww, (int) rect.newh);
+    }
+
+    public void draw(PGraphics parentGraphics)
+    {
+        if (!visible) return;
+        graphics.beginDraw();
+        CGui.getInstance().getStyle().drawElement(graphics, this);
+        graphics.endDraw();
+        parentGraphics.image(graphics, pos.v1, pos.v2);
     }
 
     public CElement setPosition(CPosition pos)
@@ -48,16 +62,9 @@ public class CElement {
 
     public void update(CSurface surface)
     {
-        if(!visible) return;
-        if(surface.mouseOver(rect))
-        {
-            mouseover = true;
-        }
-        else
-        {
-            mouseover = false;
-        }
-
+        if (!visible) return;
+        rect.update();
+        mouseover = surface.mouseOver(pos, rect);
     }
 
     public CElement addAction(CAction action)
@@ -65,4 +72,32 @@ public class CElement {
         actions.add(action);
         return this;
     }
+
+    public String getTitle()
+    {
+        return displayName;
+    }
+
+    public CRectangle getRectangle()
+    {
+        return rect;
+    }
+
+    public boolean isMouseOver()
+    {
+        return mouseover;
+    }
+
+    public boolean isActive()
+    {
+        return active;
+    }
+
+    public CElement toggleVisibility()
+    {
+        this.visible = !visible;
+        return this;
+    }
+
+
 }

@@ -1,12 +1,12 @@
 package cmb.soft.cgui;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import cmb.soft.cgui.control.CKeyBinding;
 import processing.core.PApplet;
 import processing.event.KeyEvent;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static cmb.soft.cgui.CGui.DEFAULT_RENDERER;
 
@@ -28,21 +28,24 @@ public class CWindow extends PApplet {
     public CWindow(CGui cgui, String title) {
         this.cgui = cgui;
         this.title = title;
+        cSurface = new CSurface(cgui);
         width = CGui.DEFAULT_WIDTH;
         height = CGui.DEFAULT_HEIGHT;
     }
 
+    @Override
     public void settings() {
-        println(width, height);
         size(width, height, DEFAULT_RENDERER);
     }
 
+    @Override
     public void setup() {
-        cSurface = new CSurface(cgui);
         surface.setTitle(title);
         surface.setResizable(true);
+        println("Launched new screen " + title);
     }
 
+    @Override
     public void draw() {
         CGui.getInstance().getStyle().drawBackground(g);
         cSurface.update();
@@ -50,7 +53,6 @@ public class CWindow extends PApplet {
     }
 
     public void setWidth(int width) {
-        println("newwidth", width);
         this.width = width;
     }
 
@@ -68,6 +70,7 @@ public class CWindow extends PApplet {
         surface.setAlwaysOnTop(false);
     }
 
+    @Override
     public void exit() {
         cgui.removeWindow(this);
         dispose();

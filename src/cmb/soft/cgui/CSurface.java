@@ -1,10 +1,10 @@
 package cmb.soft.cgui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import cmb.soft.cgui.celements.CButton;
 import processing.core.PGraphics;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static cmb.soft.cgui.CGui.DEFAULT_RENDERER;
 
@@ -65,8 +65,8 @@ public class CSurface {
         }
     }
 
-    public boolean mouseOver(CRectangle rect) {
-        //TODO
+    public boolean mouseOver(CPosition pos, CRectangle rect)
+    {
         return false;
     }
 

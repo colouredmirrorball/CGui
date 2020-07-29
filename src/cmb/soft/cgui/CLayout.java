@@ -1,7 +1,6 @@
 package cmb.soft.cgui;
 
 import cmb.soft.cgui.celements.CButton;
-import processing.core.PApplet;
 import processing.core.PGraphics;
 
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ public class CLayout
     {
         for (CElement element : elements)
         {
-            System.out.println("clayout draw");
             element.update(surface );
             element.draw(g);
 
@@ -43,7 +41,7 @@ public class CLayout
 
     public CButton addButton(CGui gui, String name)
     {
-        CButton newButton = new CButton(gui,name);
+        CButton newButton = new CButton(gui, name);
         elements.add(newButton);
         return newButton;
     }

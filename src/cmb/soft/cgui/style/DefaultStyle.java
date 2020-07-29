@@ -1,6 +1,7 @@
 package cmb.soft.cgui.style;
 
-import processing.core.PApplet;
+import cmb.soft.cgui.CElement;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 
 import static cmb.soft.cgui.CGui.colour;
@@ -11,22 +12,34 @@ import static cmb.soft.cgui.CGui.colour;
  */
 public class DefaultStyle implements Style
 {
-    int fillColour, strokeColour, activeFillColour, activeStrokeColour, mouseOverFillColour, mouseOverStrokeColour;
+    int fillColour;
+    int strokeColour;
+    int activeFillColour;
+    int activeStrokeColour;
+    int mouseOverFillColour;
+    int mouseOverStrokeColour;
 
     public DefaultStyle()
     {
         strokeColour = colour(20, 20, 20);
-        fillColour = colour(127,127,127);
+        fillColour = colour(127, 127, 127);
+        activeFillColour = colour(100, 100, 100);
+        mouseOverFillColour = colour(95, 91, 120);
     }
 
     @Override
-    public void drawElement(PGraphics g, String title, boolean active, boolean mouseOver, int type)
+    public void drawElement(PGraphics g, CElement element)
     {
-        g.fill(fillColour);
-        g.rect(0,0, g.width, g.height);
+        float width = element.getRectangle().getWidth();
+        float height = element.getRectangle().getHeight();
+        if (element.isMouseOver()) g.fill(mouseOverFillColour);
+        else if (element.isActive()) g.fill(activeFillColour);
+        else g.fill(fillColour);
+        g.rect(0, 0, width, height);
         g.fill(strokeColour);
-        if(g.width > 50 && g.height > 15) g.text(title, 5, 5);
-        System.out.println("drawing...");
+        g.textAlign(PConstants.CENTER);
+        g.textSize(height / 4);
+        if (g.width > 50 && g.height > 15) g.text(element.getTitle(), 0, 0, width, height);
     }
 
     @Override

@@ -3,26 +3,16 @@
  */
 package cmb.soft.cgui;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.logging.Logger;
-
 import cmb.soft.cgui.celements.CButton;
 import cmb.soft.cgui.control.CAction;
 import cmb.soft.cgui.control.CKeyBinding;
 import cmb.soft.cgui.style.DefaultStyle;
 import cmb.soft.cgui.style.Style;
 import processing.core.PConstants;
+
+import java.io.*;
+import java.util.*;
+import java.util.logging.Logger;
 
 import static cmb.soft.cgui.control.ActionMap.findAction;
 
@@ -44,10 +34,10 @@ public class CGui implements PConstants {
 
     //Used for system parameters like theme, which language, and so on
     //this will read them from config.properties and store them in its object
-    public static final Properties guiProperties = new Properties();
+    protected static final Properties guiProperties = new Properties();
     //Same but for hotkey bindings
-    public static final Properties hotkeyProperties = new Properties();
-    public static final Properties applicationProperties = new Properties();
+    protected static final Properties hotkeyProperties = new Properties();
+    protected static final Properties applicationProperties = new Properties();
     private boolean createGuiPropertiesOnExit = false;
     private final File guiPropertiesFile;
     private final File hotkeyPropertiesFile;
@@ -70,7 +60,8 @@ public class CGui implements PConstants {
         cWindows.add(defaultWindow);
 
         guiPropertiesFile = new File(defaultWindow.sketchPath() + "/data/ui.properties");
-        try (InputStream input = new FileInputStream(guiPropertiesFile)) {
+        try (InputStream input = new FileInputStream(guiPropertiesFile))
+        {
             guiProperties.load(input);
             int width = Integer.parseInt(getGuiPropertyOrDefault("width"));
             int height = Integer.parseInt(getGuiPropertyOrDefault("height"));
@@ -91,7 +82,8 @@ public class CGui implements PConstants {
         try (InputStream input = new FileInputStream(hotkeyPropertiesFile))
         {
             hotkeyProperties.load(input);
-            hotkeyProperties.stringPropertyNames().forEach(property -> bindHotkey(hotkeyProperties.getProperty(property), property));
+            hotkeyProperties.stringPropertyNames()
+                    .forEach(property -> bindHotkey(hotkeyProperties.getProperty(property), property));
         } catch (FileNotFoundException e)
         {
             logger.warning("No hotkey property file found. Using default values...");
@@ -103,7 +95,8 @@ public class CGui implements PConstants {
             e.printStackTrace();
         }
 
-        applicationPropertiesFile = new File(defaultWindow.sketchPath() + "/data/application.properties");
+        applicationPropertiesFile = new File(
+                defaultWindow.sketchPath() + "/data/application.properties");
         try (InputStream input = new FileInputStream(applicationPropertiesFile))
         {
             applicationProperties.load(input);
@@ -112,7 +105,8 @@ public class CGui implements PConstants {
             logger.warning("No application property file found. Using default values...");
             createApplicationPropertiesOnExit = true;
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             logger.warning("Could not read application property file. Using default values...");
             e.printStackTrace();
         }
@@ -140,11 +134,6 @@ public class CGui implements PConstants {
         return returnValue;
     }
 
-    //    private Class<? extends CAction> findActionClass(String action)
-    //    {
-    //        return findAction(action);
-    //    }
-
     private void bindHotkey(String hotkey, String action) {
         CKeyBinding binding = new CKeyBinding(hotkey);
         binding.registerAction(findAction(action));
@@ -156,24 +145,38 @@ public class CGui implements PConstants {
         defaultWindow.boot();
     }
 
-    //    public void draw()
-    //    {
-    //        defaultSurface.update();
-    //        defaultSurface.displayOn(defaultWindow, 0, 0);
-    //    }
-
     /**
      * Set title of default window
      *
      * @param title some title
      */
-    public void setTitle(String title) {
+    public void setTitle(String title)
+    {
         defaultWindow.setTitle(title);
     }
 
     private static String getDefaultProperty(String key)
     {
         return DefaultProperties.getDefaultProperty(key);
+    }
+
+    /**
+     * Returns a Processing-compliant "color" variable
+     *
+     * @param r red (0-255)
+     * @param g green (0-255)
+     * @param b blue (0-255)
+     * @return the colour
+     */
+
+    public static int colour(int r, int g, int b)
+    {
+        return colour(255, r, g, b);
+    }
+
+    public static int colour(int alpha, int r, int g, int b)
+    {
+        return ((alpha & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
     }
 
     public CWindow addWindow(String name)
@@ -217,17 +220,19 @@ public class CGui implements PConstants {
         return pane;
     }
 
-
     public void removeWindow(CWindow cWindow)
     {
-        for (int i = cWindows.size() - 1; i >= 0; i--) {
+        for (int i = cWindows.size() - 1; i >= 0; i--)
+        {
             CWindow window = cWindows.get(i);
-            if (window == cWindow) {
+            if (window == cWindow)
+            {
                 cWindows.remove(i);
                 return;
             }
         }
-        if (cWindows.isEmpty()) {
+        if (cWindows.isEmpty())
+        {
             exit();
         }
     }
@@ -236,60 +241,45 @@ public class CGui implements PConstants {
     {
         if (createGuiPropertiesOnExit)
         {
-            try
-            {
-                boolean success = guiPropertiesFile.createNewFile();
-                if(success) logger.info("Created new UI property file: " + guiPropertiesFile.getAbsolutePath());
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            createPropertiesOnExit(guiPropertiesFile, "UI");
         }
-        try
-        {
-            guiProperties.store(new FileOutputStream(guiPropertiesFile), "auto generated");
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        writePropertiesFile(guiProperties, guiPropertiesFile);
         if (createHotkeyPropertiesOnExit)
         {
-            try
-            {
-                boolean success = hotkeyPropertiesFile.createNewFile();
-                if(success) logger.info("Created new hotkey property file: " + hotkeyPropertiesFile.getAbsolutePath());
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            createPropertiesOnExit(hotkeyPropertiesFile, "hotkey");
         }
-        try
-        {
-            hotkeyProperties.store(new FileOutputStream(hotkeyPropertiesFile), "auto generated");
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        writePropertiesFile(hotkeyProperties, hotkeyPropertiesFile);
         if (createApplicationPropertiesOnExit)
         {
-            try
-            {
-                boolean success = applicationPropertiesFile.createNewFile();
-                if(success) logger.info("Created new application property file: " + applicationPropertiesFile.getAbsolutePath());
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            createPropertiesOnExit(applicationPropertiesFile, "application");
         }
+        writePropertiesFile(applicationProperties, applicationPropertiesFile);
+        System.exit(0);
+    }
+
+    private void writePropertiesFile(Properties properties, File file)
+    {
         try
         {
-            applicationProperties.store(new FileOutputStream(applicationPropertiesFile), "auto generated");
-
+            properties.store(new FileOutputStream(file), "auto generated");
         } catch (IOException e)
         {
             e.printStackTrace();
         }
-        System.exit(0);
+    }
+
+    private void createPropertiesOnExit(File hotkeyPropertiesFile, String key)
+    {
+        try
+        {
+            boolean success = hotkeyPropertiesFile.createNewFile();
+            if (success)
+                logger.info(String.format("Created new %s property file: %s", key,
+                        hotkeyPropertiesFile.getAbsolutePath()));
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public Style getStyle()
@@ -300,25 +290,6 @@ public class CGui implements PConstants {
     public void setStyle(Style style)
     {
         this.style = style;
-    }
-
-    /**
-     * Returns a Processing-compliant "color" variable
-     *
-     * @param r red (0-255)
-     * @param g green (0-255)
-     * @param b blue (0-255)
-     * @return the colour
-     */
-
-    public static int colour(int r, int g, int b)
-    {
-        return colour(255, r, g, b);
-    }
-
-    public static int colour(int alpha, int r, int g, int b)
-    {
-        return ((alpha & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
     }
 
     public CWindow getDefaultWindow()

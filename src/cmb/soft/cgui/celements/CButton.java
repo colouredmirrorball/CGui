@@ -1,6 +1,7 @@
 package cmb.soft.cgui.celements;
 
-import cmb.soft.cgui.*;
+import cmb.soft.cgui.CElement;
+import cmb.soft.cgui.CGui;
 
 import static cmb.soft.cgui.celements.ElementConstants.BUTTON;
 
