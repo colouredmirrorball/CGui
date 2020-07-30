@@ -5,12 +5,18 @@ import java.util.List;
 
 /**
  * Created by CMB on 27/06/2015.
+ * <p>
+ * The CRectangle deals with everything related to position and size. In it simplest form, it merely contains x, y,
+ * width and height coordinates. But it can also define a position relative to another rectangle, and recalculate its
+ * position when it determines that the parent component has changed. It can also snap to specific locations of a
+ * variable parent CRectangle. Smooth animations are built in.
  */
 public class CRectangle
 {
 
     public final static int ABSOLUTE = 0;
     public final static int RELATIVE_TO_BOUNDS = 1;
+
     public final static int UPPER_LEFT = -1;
     public final static int UPPER_RIGHT = -2;
     public final static int LOWER_LEFT = -3;
@@ -34,13 +40,12 @@ public class CRectangle
      */
     protected float v1;
     protected float v2;
-
-
-    private CRectangle enclosingRectangle;
     protected float w;
     protected float h;
     protected float neww;
     protected float newh;
+    private CRectangle enclosingRectangle;
+    private CRectangle parentRectangle;
     private float x;
     private float y;
     private boolean updating = false;
@@ -48,21 +53,12 @@ public class CRectangle
 
     public CRectangle(CRectangle enclosingRectangle, int x, int y, int width, int height)
     {
-        this(enclosingRectangle, ABSOLUTE, 0, x, y, width, height);
+        this(enclosingRectangle, ABSOLUTE, UPPER_LEFT, x, y, width, height);
     }
 
-    public CRectangle(CRectangle enclosingRectangle, int mode, int relativeToBounds, int v1, int v2, int width, int height)
+    public CRectangle(CRectangle enclosingRectangle, int mode, int relativeAnchorPointMode, int v1, int v2, int width, int height)
     {
-        this.v1 = v1;
-        this.v2 = v2;
-        this.w = width;
-        this.h = height;
-        this.mode = mode;
-        this.enclosingRectangle = enclosingRectangle;
-        this.relativeAnchorPoint = relativeToBounds;
-        enclosingRectangle.addSizeChangeListener(this::recalculatePositions);
-        enclosingRectangle.addAnimationEventListener(this::recalculatePositions);
-        recalculatePositions();
+        this(enclosingRectangle, null, mode, relativeAnchorPointMode, v1, v2, width, height);
     }
 
 
@@ -75,6 +71,21 @@ public class CRectangle
         h = height;
         neww = width;
         newh = height;
+        recalculatePositions();
+    }
+
+    public CRectangle(CRectangle enclosingRectangle, CRectangle parentRectangle, int mode, int relativeAnchorPointMode, int v1, int v2, int width, int height)
+    {
+        this.v1 = v1;
+        this.v2 = v2;
+        this.w = width;
+        this.h = height;
+        this.mode = mode;
+        this.enclosingRectangle = enclosingRectangle;
+        this.parentRectangle = parentRectangle;
+        this.relativeAnchorPoint = relativeAnchorPointMode;
+        enclosingRectangle.addSizeChangeListener(this::recalculatePositions);
+        enclosingRectangle.addAnimationEventListener(this::recalculatePositions);
         recalculatePositions();
     }
 
