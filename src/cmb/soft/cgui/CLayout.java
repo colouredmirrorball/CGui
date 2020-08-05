@@ -59,7 +59,7 @@ public class CLayout
             //just place them in a vertical list for now
             CElement lastElement = elements.get(elements.size() - 1);
             CRectangle parentRectangle = lastElement.getRectangle();
-            return new CRectangle(parentRectangle, CRectangle.RELATIVE_TO_BOUNDS, CRectangle.LOWER_LEFT, 0, 5,
+            return new CRectangle(parentRectangle, CRectangle.Mode.RELATIVE_TO_BOUNDS, CRectangle.RelativeAnchorPoint.LOWER_LEFT, 0, 5,
                     CGui.getInstance().getDefaultElementWidth(), CGui.getInstance().getDefaultElementHeight());
         }
     }

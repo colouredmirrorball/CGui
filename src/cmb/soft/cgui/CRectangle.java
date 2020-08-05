@@ -3,6 +3,8 @@ package cmb.soft.cgui;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cmb.soft.cgui.CRectangle.Mode.ABSOLUTE;
+
 /**
  * Created by CMB on 27/06/2015.
  * <p>
@@ -13,27 +15,17 @@ import java.util.List;
  */
 public class CRectangle
 {
-
-    public final static int ABSOLUTE = 0;
-    public final static int RELATIVE_TO_BOUNDS = 1;
-
-    public final static int UPPER_LEFT = -1;
-    public final static int UPPER_RIGHT = -2;
-    public final static int LOWER_LEFT = -3;
-    public final static int LOWER_RIGHT = -4;
-    public final static int UPPER_CENTER = -5;
-    public final static int LOWER_CENTER = -6;
-    public final static int LEFT_CENTER = -7;
-    public final static int RIGHT_CENTER = -8;
-    public final static int CENTER = -9;
     //These get notified once when the rectangle receives new coordinates (targeted at expensive graphic buffer updates)
     private final List<ChangeListener> rectangleUpdatedListeners = new ArrayList<>();
     //These get notified any time new coordinates are calculated (usually many in a row)
     private final List<ChangeListener> animationListeners = new ArrayList<>();
+
+    //    public final static int ABSOLUTE = 0;
+//    public final static int RELATIVE_TO_BOUNDS = 1;
     //Easily generate positions relative to stuff
-    protected int mode;
+    protected Mode mode;
     //Presets:
-    protected int relativeAnchorPoint;
+    protected RelativeAnchorPoint relativeAnchorPoint;
     /*
     v1 and v2 form a vector (v1, v2) that define a distance to an anchor point defined by mode. If mode is absolute,
     they are the absolute x and y coordinates.
@@ -50,13 +42,13 @@ public class CRectangle
     private float y;
     private boolean updating = false;
 
-
     public CRectangle(CRectangle enclosingRectangle, int x, int y, int width, int height)
     {
-        this(enclosingRectangle, ABSOLUTE, UPPER_LEFT, x, y, width, height);
+        this(enclosingRectangle, ABSOLUTE, RelativeAnchorPoint.UPPER_LEFT, x, y, width, height);
     }
 
-    public CRectangle(CRectangle enclosingRectangle, int mode, int relativeAnchorPointMode, int v1, int v2, int width, int height)
+    public CRectangle(CRectangle enclosingRectangle, Mode mode, RelativeAnchorPoint relativeAnchorPointMode, int v1,
+                      int v2, int width, int height)
     {
         this(enclosingRectangle, null, mode, relativeAnchorPointMode, v1, v2, width, height);
     }
@@ -74,7 +66,8 @@ public class CRectangle
         recalculatePositions();
     }
 
-    public CRectangle(CRectangle enclosingRectangle, CRectangle parentRectangle, int mode, int relativeAnchorPointMode, int v1, int v2, int width, int height)
+    public CRectangle(CRectangle enclosingRectangle, CRectangle parentRectangle, Mode mode,
+                      RelativeAnchorPoint relativeAnchorPointMode, int v1, int v2, int width, int height)
     {
         this.v1 = v1;
         this.v2 = v2;
@@ -89,7 +82,6 @@ public class CRectangle
         recalculatePositions();
     }
 
-
     private void recalculatePositions()
     {
         float parentX = enclosingRectangle == null ? 0 : enclosingRectangle.getX();
@@ -100,7 +92,7 @@ public class CRectangle
         {
             x = parentX + v1;
             y = parentY + v2;
-        } else if (mode == RELATIVE_TO_BOUNDS)
+        } else if (mode == Mode.RELATIVE_TO_BOUNDS)
         {
             switch (relativeAnchorPoint)
             {
@@ -122,7 +114,6 @@ public class CRectangle
             }
         }
     }
-
 
     /**
      * Optional but required for animating
@@ -209,5 +200,18 @@ public class CRectangle
     {
         return y;
     }
+
+    public enum Mode
+    {
+        ABSOLUTE,
+        RELATIVE_TO_BOUNDS
+    }
+
+    public enum RelativeAnchorPoint
+    {
+        UPPER_LEFT, UPPER_RIGHT, LOWER_LEFT, LOWER_RIGHT, UPPER_CENTER, LOWER_CENTER, LEFT_CENTER, RIGHT_CENTER, CENTER
+
+    }
+
 
 }
