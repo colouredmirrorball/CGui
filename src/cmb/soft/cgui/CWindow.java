@@ -18,8 +18,7 @@ import static cmb.soft.cgui.CGui.DEFAULT_RENDERER;
  */
 public class CWindow extends PApplet {
 
-    String title = "";
-    //    protected boolean update = true;
+    String title;
 
     CGui cgui;
     CSurface cSurface;
@@ -65,7 +64,7 @@ public class CWindow extends PApplet {
         try {
             Thread.sleep(3);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
         surface.setAlwaysOnTop(false);
     }
@@ -95,6 +94,7 @@ public class CWindow extends PApplet {
         }
     }
 
+    @Override
     public void keyPressed(KeyEvent event) {
         String hotkey = parseEvent(event);
         try {

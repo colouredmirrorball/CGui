@@ -27,13 +27,12 @@ public class CGui implements PConstants
     public final static int DEFAULT_SPACING = 5;
     public final static int DEFAULT_ELEMENT_WIDTH = 150;
     public final static int DEFAULT_ELEMENT_HEIGHT = 50;
-    //    public static Accessible.EventHandler getInstance;
 
     CSurface defaultSurface;
     CWindow defaultWindow;
 
     //Stores all language files
-    public static ResourceBundle resourceBundle;
+    private static ResourceBundle resourceBundle;
     //Specifies the language
     private Locale locale;
 
@@ -203,16 +202,6 @@ public class CGui implements PConstants
 
     }
 
-    public void addElement(CElement element, CLayout layout)
-    {
-
-    }
-
-    public void addElement(CElement element)
-    {
-
-    }
-
     public CButton addButton(String name)
     {
         return defaultSurface.addButton(this, name);
@@ -233,7 +222,7 @@ public class CGui implements PConstants
             if (window == cWindow)
             {
                 cWindows.remove(i);
-                return;
+                break;
             }
         }
         if (cWindows.isEmpty())
@@ -264,9 +253,9 @@ public class CGui implements PConstants
 
     private void writePropertiesFile(Properties properties, File file)
     {
-        try
+        try (FileOutputStream stream = new FileOutputStream(file))
         {
-            properties.store(new FileOutputStream(file), "auto generated");
+            properties.store(stream, "auto generated");
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -279,7 +268,7 @@ public class CGui implements PConstants
         {
             boolean success = hotkeyPropertiesFile.createNewFile();
             if (success)
-                logger.info(String.format("Created new %s property file: %s", key,
+                logger.info(() -> String.format("Created new %s property file: %s", key,
                         hotkeyPropertiesFile.getAbsolutePath()));
         } catch (IOException e)
         {
@@ -304,6 +293,7 @@ public class CGui implements PConstants
 
     public void executeAction(CAction action)
     {
+        //todo
         System.out.println(action.getClass().getName());
     }
 
