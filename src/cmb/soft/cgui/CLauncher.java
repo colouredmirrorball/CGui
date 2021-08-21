@@ -11,7 +11,6 @@ public class CLauncher extends PApplet {
     @Override
     public void settings() {
         size(300, 300);
-
     }
 
     /**

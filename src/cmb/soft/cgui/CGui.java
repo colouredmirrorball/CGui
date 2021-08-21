@@ -3,26 +3,16 @@
  */
 package cmb.soft.cgui;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.logging.Logger;
-
 import cmb.soft.cgui.celements.CButton;
 import cmb.soft.cgui.control.CAction;
 import cmb.soft.cgui.control.CKeyBinding;
 import cmb.soft.cgui.style.DefaultStyle;
 import cmb.soft.cgui.style.Style;
 import processing.core.PConstants;
+
+import java.io.*;
+import java.util.*;
+import java.util.logging.Logger;
 
 import static cmb.soft.cgui.control.ActionMap.findAction;
 
@@ -306,8 +296,13 @@ public class CGui implements PConstants {
 
     public void executeAction(CAction action)
     {
-        //todo
-        System.out.println(action.getClass().getName());
+        try
+        {
+            action.execute();
+        } catch (Exception exception)
+        {
+            log(exception);
+        }
     }
 
     public float getAnimationSpeed()
