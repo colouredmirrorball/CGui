@@ -3,6 +3,20 @@
  */
 package cmb.soft.cgui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.logging.Logger;
+
 import cmb.soft.cgui.celements.CButton;
 import cmb.soft.cgui.control.CAction;
 import cmb.soft.cgui.control.CKeyBinding;
@@ -10,23 +24,18 @@ import cmb.soft.cgui.style.DefaultStyle;
 import cmb.soft.cgui.style.Style;
 import processing.core.PConstants;
 
-import java.io.*;
-import java.util.*;
-import java.util.logging.Logger;
-
 import static cmb.soft.cgui.control.ActionMap.findAction;
 
-public class CGui implements PConstants
-{
+public class CGui implements PConstants {
     private static CGui instance;
 
-    public final static String DEFAULT_RENDERER = P3D;
-    public final static int DEFAULT_WIDTH = 1200;
-    public final static int DEFAULT_HEIGHT = 800;
-    public final static float DEFAULT_ANIMATION_SPEED = 0.5f;
-    public final static int DEFAULT_SPACING = 5;
-    public final static int DEFAULT_ELEMENT_WIDTH = 150;
-    public final static int DEFAULT_ELEMENT_HEIGHT = 50;
+    public static final String DEFAULT_RENDERER = P3D;
+    public static final int DEFAULT_WIDTH = 1200;
+    public static final int DEFAULT_HEIGHT = 800;
+    public static final float DEFAULT_ANIMATION_SPEED = 0.5f;
+    public static final int DEFAULT_SPACING = 5;
+    public static final int DEFAULT_ELEMENT_WIDTH = 150;
+    public static final int DEFAULT_ELEMENT_HEIGHT = 50;
 
     CSurface defaultSurface;
     CWindow defaultWindow;
@@ -125,6 +134,10 @@ public class CGui implements PConstants
 
     public static void log(String log) {
         Logger.getLogger("CGui").info(log);
+    }
+
+    public static void log(Exception exception) {
+        Logger.getLogger("CGui").severe(exception.getMessage());
     }
 
     public static String getGuiPropertyOrDefault(String key) {

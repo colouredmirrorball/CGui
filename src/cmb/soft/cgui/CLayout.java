@@ -1,10 +1,11 @@
 package cmb.soft.cgui;
 
-import cmb.soft.cgui.celements.CButton;
-import processing.core.PGraphics;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import cmb.soft.cgui.celements.CButton;
+import cmb.soft.cgui.celements.CRadioButtons;
+import processing.core.PGraphics;
 
 /**
  * A CLayout is a template for the UI. It defines the (initial) UI elements' positions and sizes. A CPane contains the
@@ -64,15 +65,19 @@ public class CLayout
         }
     }
 
-    public CButton addButton(CGui gui, String name)
-    {
+    public CButton addButton(CGui gui, String name) {
         CButton newButton = new CButton(gui, name);
         addElementWithPosition(newButton);
         return newButton;
     }
 
-    public List<CTab> getTabs()
-    {
+    public List<CTab> getTabs() {
         return tabs;
+    }
+
+    public CRadioButtons addRadioButtons(CGui gui, String name) {
+        CRadioButtons radioButtons = new CRadioButtons(gui, name);
+        addElementWithPosition(radioButtons);
+        return radioButtons;
     }
 }

@@ -1,16 +1,15 @@
 package cmb.soft.cgui;
 
-import cmb.soft.cgui.control.CAction;
-import processing.core.PGraphics;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import cmb.soft.cgui.control.CAction;
+import processing.core.PGraphics;
 
 /**
  * Created by florian on 28/11/2014.
  */
-public class CElement
-{
+public class CElement {
     private final String name;
     private final PGraphics graphics;
 
@@ -21,7 +20,6 @@ public class CElement
     private boolean mouseover;
     protected List<CAction> actions = new ArrayList<>();
     private boolean visible = true;
-    protected int element;
 
     public CElement(CGui gui, String name)
     {
