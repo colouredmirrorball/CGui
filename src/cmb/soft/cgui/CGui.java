@@ -45,6 +45,7 @@ public class CGui implements PConstants {
     private final File guiPropertiesFile;
     private final File hotkeyPropertiesFile;
     private final File applicationPropertiesFile;
+    private final List<ExitListener> exitListeners = new ArrayList<>();
     private boolean createApplicationPropertiesOnExit;
     private boolean createHotkeyPropertiesOnExit;
 
@@ -251,7 +252,13 @@ public class CGui implements PConstants {
             createPropertiesOnExit(applicationPropertiesFile, "application");
         }
         writePropertiesFile(applicationProperties, applicationPropertiesFile);
+        exitParents();
         System.exit(0);
+    }
+
+    private void exitParents()
+    {
+        exitListeners.forEach(ExitListener::stop);
     }
 
     private void writePropertiesFile(Properties properties, File file)
@@ -327,5 +334,10 @@ public class CGui implements PConstants {
     {
         //TODO make configurable
         return DEFAULT_ELEMENT_HEIGHT;
+    }
+
+    public void addExitListener(ExitListener listener)
+    {
+        exitListeners.add(listener);
     }
 }
